@@ -20,7 +20,7 @@ class Detector(object):
         for (x, y, w, h) in hornRect:
             cv2.rectangle(toDet, (x, y), (x+w, y +h), (10, 10, 200), 10)
             count += 50  
-            print("testing print function")
+            #print("testing print function")
             #with open() as f:
             #    read_data = f.read()
                 
@@ -41,10 +41,11 @@ class Detector(object):
             cv2.rectangle(toDetect, (x, y), (x+w, y+h), (10, 200, 10), 10)
             
         return toDetect
-
+#import dector
 vido = cv2.VideoCapture(0)
 det = Detector()
 p = Path('.')
+[x for x in p.iterdir() if x.is_dir()]
 c = 0
 while(True):
     #Get the video frame
@@ -67,7 +68,7 @@ while(True):
     #detect using haar
     #toUseHaar = frame.copy()
     #im = det.haar(toUseHaar)
-    print(str(c))
+    #print(str(c))
     #Show the image
     cv2.imshow('lbp vs haar', im)
     
