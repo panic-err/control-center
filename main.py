@@ -46,6 +46,8 @@ vido = cv2.VideoCapture(0)
 det = Detector()
 p = Path('.')
 [x for x in p.iterdir() if x.is_dir()]
+l = list(p.glob('**/*.py'))
+print(l)
 c = 0
 while(True):
     #Get the video frame
