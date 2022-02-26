@@ -20,7 +20,7 @@ class Detector(object):
         for (x, y, w, h) in hornRect:
             cv2.rectangle(toDet, (x, y), (x+w, y +h), (10, 10, 200), 10)
             count += 50  
-            print("Printing out mat file "+str(count))
+            print("testing print function")
             #with open() as f:
             #    read_data = f.read()
                 
