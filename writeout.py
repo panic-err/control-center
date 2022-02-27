@@ -16,14 +16,14 @@ class Detector(object):
     #longbl = cv2.CascadeClassifier('cascades/longbl.xml')
     #sword = cv2.CascadeClassifier('cascades/sword.xml')
     #lbpCascade = cv2.CascadeClassifier('cascades/lbp0.xml')
-    libpClay = cv2.CascadeClassifier('cascades/gummywurm.xml')
+    libpClay = cv2.CascadeClassifier('cascades/dodecahedral0.xml')
     count = 0
     #haar
     #haarCascade = cv2.CascadeClassifier('cascades/haar.xml')
     
     def lbp(self, img):
         toDetect = img.copy()
-        self.count = 0
+        count = 0
         toDet = cv2.cvtColor(toDetect, cv2.COLOR_BGR2GRAY)
         t = toDet.copy()
         #hornRect = self.lbpCascade.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
@@ -33,19 +33,13 @@ class Detector(object):
         #fouram0 = self.fouram.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #longbl0 = self.longbl.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #sword0 = self.sword.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
-        clay0 = self.libpClay.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 3)
+        clay0 = self.libpClay.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         
-        for (x, y, w, h) in clay0:
-            #if (x <= 239):
-            print("Found {0} hands!".format(len(clay0)))
-            #self.count += 5*len(clay0)
-            #if self.count >= 5:
-            cv2.rectangle(toDet, (x, y), (x+w, y+h), (10, 10, 200), 10)
-            #    self.count -= 2
-            #    self.count = 0
-            #cv2.imwrite(str(self.count)+'img.jpg', t)
-            #self.count += 1
-            #print("writing out image"+str(self.count))
+        #for (x, y, w, h) in clay0:
+        
+        cv2.imwrite(str(self.count)+'img.jpg', t)
+        self.count += 1
+        print("writing out image"+str(self.count))
                 
         
         #for (x, y, w, h) in wakizashi0:
