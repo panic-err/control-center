@@ -18,8 +18,8 @@ from PySide6.QtQuick import QQuickWindow
 from PySide6.QtGui import Qt
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
-from PySide6.QtWidgets import (QWidget, QProgressBar, QFrame, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
-from __feature__ import snake_case
+from PySide6.QtWidgets import (QWidget, QProgressBar, QFrame, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout, QSlider)
+#from __feature__ import snake_case
 
 
 #for opencv stuff
@@ -118,35 +118,35 @@ class InputBox(QWidget):
         self.senders = []
         self.resize(800, 150)
         self.layout = QGridLayout(self)
-        self.layout.set_horizontal_spacing(0)
-        self.layout.set_vertical_spacing(0)
+        self.layout.horizontalSpacing()
+        self.layout.verticalSpacing()
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(1):
-            self.set_window_title("Input Bar")
+            self.setWindowTitle("Input Bar")
             mess = QLineEdit("Messages!")
             mess.position = i
-            mess.set_max_length(60)
+            mess.setMaxLength(60)
             mess.returnPressed.connect(self.greet)
             self.greeters.append(mess)
             mess.setStyleSheet("color:aqua;")
-            self.layout.add_widget(mess, i, 0)
+            self.layout.addWidget(mess, i, 0)
             nameButton = QPushButton('PLACEHOLDER')
             nameButton.clicked.connect(self.name_detail)
             nameButton.setStyleSheet("color:aqua;")
-            self.layout.add_widget(nameButton, i, 1)
+            self.layout.addWidget(nameButton, i, 1)
             button = QPushButton(str(i))
             button.setStyleSheet("color:orange;")
             #self.position = i
             button.position = i
-            self.layout.add_widget(button, i, 2)
+            self.layout.addWidget(button, i, 2)
             send = QPushButton("SEND")
             send.setStyleSheet("color:aqua;")
             send.position = i
             send.clicked.connect(self.greetNoColour)
             button.clicked.connect(self.greet)
             self.senders.append(send)
-            self.layout.add_widget(send, i, 3)
+            self.layout.addWidget(send, i, 3)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
             self.setStyleSheet("background-color:#b767bc;")
@@ -154,7 +154,7 @@ class InputBox(QWidget):
             self.nameDetailLayout = QVBoxLayout(self.nameDetail)
             nameDetail = "Details"
             labelDetail = QPushButton(nameDetail)
-            self.nameDetailLayout.add_widget(labelDetail)
+            self.nameDetailLayout.addWidget(labelDetail)
 
         self.established = False
     @Property(QWidget)
@@ -179,7 +179,7 @@ class InputBox(QWidget):
             #print(outString)
             l = QLabel(outString)
 
-            self.nameDetail.layout().add_widget(l)
+            self.nameDetail.layout().addWidget(l)
             l.show()
             self.established = True
         #self.nameDetail.setText(outString)
@@ -213,9 +213,43 @@ class InputBox(QWidget):
     def boop():
         print("boop")
         #self.message.text = random.choice(self.hello)
-
+#class Heartbeat(threading.Thread):
+    
 class Receiver(QWidget):
+    x, y = 100, 200
+    #img = 
+    def run(self):
+        while True:
+            sel.show()
+        print("doot")
+    def __init__(self):
+        threading.Thread.__init__(self)
+    @Slot()
+    def increaseX(self):
+        self.x += 1
+    @Slot()
+    def increaseY(self):
+        self.y += 1
+    @Slot()
+    def decreaseX(self):
+        self.x -= 1
+    @Slot()
+    def decreaseY(self):
+        self.y -= 1
+    def updateScreen(self):
+        while True:
+            self.show()
+    def drawLines(self):
+        img = cv.imread('stills/horns.jpg',0)
+        
+        edges = cv.Canny(img, self.x, self.y)
+        
+        plt.subplot(121),plt.imshow(img,cmap = 'gray')
+        plt.title('Original Image'),plt.xticks([]), plt.yticks([])
+        plt.subplot(122),plt.imshow(edges,cmap = 'gray')
+        plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
 
+        plt.show()
     def consumeCallback(self, ch, method, properties, body):
         print("[x], %r:%r" % (method.routing_key, body))
         bodyStr = str(body)
@@ -304,12 +338,12 @@ class Receiver(QWidget):
         self.surfacers = []
         self.resize(1115, 550)
         self.layout = QGridLayout(self)
-        self.layout.set_horizontal_spacing(0)
-        self.layout.set_vertical_spacing(0)
+        self.layout.setHorizontalSpacing(0)
+        self.layout.setVerticalSpacing(0)
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(28):
-            self.set_window_title("Main")
+            self.setWindowTitle("Main")
             if i >= 6:
                 mess = QLineEdit("Messages!")
                 mess.position = i
@@ -318,22 +352,22 @@ class Receiver(QWidget):
                 mess = QLabel("HEADER")
                 mess.position = i
                 mess.coord = 8
-                mess.set_alignment(Qt.AlignBottom | Qt.AlignCenter)
+                mess.setAlignment(Qt.AlignBottom | Qt.AlignCenter)
                 mess.setText("HEADER")
                 mess.setStyleSheet("margin:0 auto;")
                 mess.show()
             #mess.returnPressed.connect(self.greet)
             self.greeters.append(mess)
             mess.setStyleSheet("color:aqua;")
-            self.layout.add_widget(mess, i, 0, 2, 1)
+            self.layout.addWidget(mess, i, 0, 2, 1)
             if mess.coord < 10:
                 spacer = QProgressBar()
                 spacer.coord = 8
                 spacer.setMaximum(10)
-                spacer.set_format("")
+                spacer.setFormat("")
                 if i < 10:
                     spacer.setStyleSheet("background-color:#bc6797;")
-                    self.layout.add_widget(spacer, i, 6)
+                    self.layout.addWidget(spacer, i, 6)
 
                     self.spacers.append(spacer)
             if i < 10:
@@ -344,7 +378,7 @@ class Receiver(QWidget):
                 nameButton = QPushButton("NAME")
             #nameButton.clicked.connect(self.name_detail)
             nameButton.setStyleSheet("color:aqua;")
-            self.layout.add_widget(nameButton, i, 4)
+            self.layout.addWidget(nameButton, i, 4)
             if i < 10:
                 button = QPushButton("-")
                 button.position = i
@@ -354,17 +388,17 @@ class Receiver(QWidget):
             if i == 10:
                 b = QPushButton("Messages as they are added\n0:0:0:0:0:0:0:0:0:0")
                 #this should be added to a collection
-                self.layout.add_widget(b, i, 6, 28, 1)
+                self.layout.addWidget(b, i, 6, 28, 1)
             button.setStyleSheet("color:red;")
             #self.position = i
             button.position = i
-            self.layout.add_widget(button, i, 5)
+            self.layout.addWidget(button, i, 5)
             if i < 6:
                 head = QPushButton("GLOBAL")
                 head.setStyleSheet("background-color:orange;")
                 head.position = i
                 self.senders.append(head)
-                self.layout.add_widget(head, i, 3)
+                self.layout.addWidget(head, i, 3)
             else:
                 print("And a small green alien that only homer can see")
                 send = QPushButton("SEND")
@@ -373,7 +407,7 @@ class Receiver(QWidget):
                 #send.clicked.connect(self.greetNoColour)
                 #button.clicked.connect(self.greet)
                 self.senders.append(send)
-                #self.layout.add_widget(send, i, 3)
+                #self.layout.addWidget(send, i, 3)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
             self.setStyleSheet("background-color:#bc6797;")
@@ -382,7 +416,7 @@ class Receiver(QWidget):
             nameDetail = "Details"
             labelDetail = QPushButton(nameDetail)
             #labelDetail.clicked.connect(self.emission)
-            self.nameDetailLayout.add_widget(labelDetail)
+            self.nameDetailLayout.addWidget(labelDetail)
 
         self.established = False
 
@@ -399,19 +433,11 @@ if __name__ == "__main__":
     img = cv.imread('../computer-vision/pp/combinedPositives1/115img.jpg',0)
     
     
-    xval = 100
-    yval = 200
-    edges = cv.Canny(img, xval, yval)
     
     
     #vary 100 and 200 somehow
 
-    plt.subplot(121),plt.imshow(img,cmap = 'gray')
-    plt.title('Original Image'),plt.xticks([]), plt.yticks([])
-    plt.subplot(122),plt.imshow(edges,cmap = 'gray')
-    plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
 
-    plt.show()
 
 
     app = QApplication([])
@@ -420,12 +446,17 @@ if __name__ == "__main__":
     recv = Receiver()
     input = InputBox()
     #This is because consuming messages is a blocking function
-    #tt = threading.Thread(target=input.channel.start_consuming)
+    #recv.drawLines()
+    input.show()
+    #pictureThread = threading.Thread(target=input)
+    #pictureThread.start()
+    #inputthread = threading.Thread(target=recv.drawLines)
     #t = threading.Thread(target=recv.channel.start_consuming)
     #widget.show()
-    input.show()
+    #inputthread.start()
+    #input.show()
     #t.start()
-
+    recv.drawLines()
 
     #tt.start()
     #bip = threading.Thread(target=Heartbeat.__init__)
