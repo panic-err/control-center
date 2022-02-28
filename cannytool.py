@@ -33,7 +33,7 @@ class Detector(object):
         #fouram0 = self.fouram.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #longbl0 = self.longbl.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #sword0 = self.sword.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
-        clay0 = self.libpClay.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        clay0 = self.libpClay.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 3)
         
         for (x, y, w, h) in clay0:
             #if (x <= 239):

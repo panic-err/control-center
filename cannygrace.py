@@ -1,3 +1,12 @@
+
+import cv2
+import numpy
+import os
+import matplotlib.pyplot as plt
+
+from pathlib import Path
+
+
 import PySide6
 
 print(PySide6.__version__)
@@ -18,7 +27,7 @@ from PySide6.QtQuick import QQuickWindow
 from PySide6.QtGui import Qt
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
-from PySide6.QtWidgets import (QWidget, QProgressBar, QFrame, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout, QSlider)
+from PySide6.QtWidgets import (QWidget, QProgressBar, QFrame, QGraphicsScene, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout, QSlider)
 #from __feature__ import snake_case
 
 
@@ -27,54 +36,6 @@ import numpy as np
 import cv2 as cv
 from matplotlib import pyplot as plt
 
-
-
-def colour(toColour):
-       attack = False
-       seed(int(float(datetime.datetime.now().microsecond)*25485039845))
-       rando = randint(1, 100)
-       if rando > 50:
-               val = "38"
-       else:
-               val = "48"
-
-       key=""
-       exit = False
-       #print("\n\n"+str(size.lines))
-       p = ""
-       pos = 1
-       def calc_red():
-            red = randint(1, 255)
-            if red < 0:
-                red = 0
-            return red
-       def calc_green():
-            green = randint(1, 255)
-            if green < 0:
-                green = 0
-            return green
-       def calc_blue():
-            blue = randint(1, 255)
-            if blue < 0:
-                blue = 0
-            return blue
-
-       p += "\\x1b["+val+";2;"+str(calc_blue())+";"+str(calc_green())+";"+str(calc_red())+"m"+toColour+" "
-       #print(p+"\n")
-       #time.sleep(0.01)
-       pos = 0
-       if not attack:
-           p += " \\033[0m"
-           p += "\033[0m"
-       else:
-           p += ""
-       blank = ""
-       pos = 0
-       total = 0
-       print(p)
-       #print("\033["+str(line)+";0H\033[0m"+blank+"\033[0m")
-
-       return p
 
 class InputBox(QWidget):
 
@@ -157,6 +118,8 @@ class InputBox(QWidget):
             self.nameDetailLayout.addWidget(labelDetail)
 
         self.established = False
+    @Property(QGraphicsScene)
+    @Property(threading.Thread)
     @Property(QWidget)
     def buttonList():
         return self.buttons
@@ -188,14 +151,36 @@ class InputBox(QWidget):
         self.nameDetail.show()
     @Slot()
     def greet(self):
-        butt = self.focus_widget()
+        #code for showing a string in an array
+        if not self.established:
+            filename = '101/1.txt'
+            out = []
+            outString = ""
+            count = 0
+            with open(filename) as file:
+                lines = file.readlines()
+                for i in range(len(lines)):
+                    outString += lines[i]
+                count += 1
+            #print(outString)
+            l = QLabel(outString)
+
+            self.nameDetail.layout().addWidget(l)
+            l.show()
+            self.established = True
+        #self.nameDetail.setText(outString)
+        self.nameDetail.resize(450, 500)
+        self.nameDetail.setStyleSheet("background:black;font:Courier New;color:pink;")
+        self.nameDetail.show()        
+        
+        butt = self.focusWidget()
         
         print("Butt  number"+str(butt.position))
         print(self.greeters[butt.position].text())
         print(butt.position)
     @Slot()
     def greetNoColour(self):
-        butt = self.focus_widget()
+        butt = self.focusWidget()
         #try:
         #    self.emissionNoColour(butt.position)
         #
@@ -294,7 +279,7 @@ class Receiver(QWidget):
             sys.exit()
     @Slot()
     def dig(self):
-        butt = self.focus_widget()
+        butt = self.focusWidget()
         if self.spacers[butt.position].coord <= 10:
             self.spacers[butt.position].coord -= 1
             self.spacers[butt.position].setValue(self.spacers[butt.position].coord)
@@ -302,7 +287,7 @@ class Receiver(QWidget):
             self.spacers[butt.position].coord = 10
     @Slot()
     def surface(self):
-        butt = self.focus_widget()
+        butt = self.focusWidget()
         if self.spacers[butt.position].coord >= 0:
             self.spacers[butt.position].coord += 1
             self.spacers[butt.position].setValue(self.spacers[butt.position].coord)
@@ -424,6 +409,96 @@ class Receiver(QWidget):
         self.show()
         #self.channel.start_consuming()
 
+class Detector(object):
+    
+    #lbp
+    #wakizashi = cv2.CascadeClassifier('cascades/wakizashi.xml')
+    #count = 0
+    #bastardsword = cv2.CascadeClassifier('cascades/bastardsword.xml')
+    #doot = cv2.CascadeClassifier('cascades/doot.xml')
+    #fouram = cv2.CascadeClassifier('cascades/fouram.xml')
+    #longbl = cv2.CascadeClassifier('cascades/longbl.xml')
+    #sword = cv2.CascadeClassifier('cascades/sword.xml')
+    #lbpCascade = cv2.CascadeClassifier('cascades/lbp0.xml')
+    libpClay = cv2.CascadeClassifier('cascades/gummywurm.xml')
+    count = 0
+    #haar
+    #haarCascade = cv2.CascadeClassifier('cascades/haar.xml')
+    
+    def lbp(self, img):
+        toDetect = img.copy()
+        self.count = 0
+        toDet = cv2.cvtColor(toDetect, cv2.COLOR_BGR2GRAY)
+        t = toDet.copy()
+        #hornRect = self.lbpCascade.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        #wakizashi0 = self.wakizashi.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        #bastardsword0 = self.bastardsword.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        #doot0 = self.doot.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        #fouram0 = self.fouram.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        #longbl0 = self.longbl.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        #sword0 = self.sword.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        clay0 = self.libpClay.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        
+        for (x, y, w, h) in clay0:
+            #if (x <= 239):
+            print("Found {0} hands!".format(len(clay0)))
+            #self.count += 5*len(clay0)
+            #if self.count >= 5:
+            cv2.rectangle(toDet, (x, y), (x+w, y+h), (10, 10, 200), 10)
+            #    self.count -= 2
+            #    self.count = 0
+            #cv2.imwrite(str(self.count)+'img.jpg', t)
+            #self.count += 1
+            #print("writing out image"+str(self.count))
+                
+        
+        #for (x, y, w, h) in wakizashi0:
+        #    count += 5000
+        #for (x, y, w, h) in bastardsword0:
+        #    count += 5000
+        #    count += 5000
+        #    count += 5000
+        #    count += 20000000
+        #    cv2.rectangle(toDet, (x, y), (x+w, y +h), (10, 10, 200), 10)
+        #    #print(str(count))
+        #for (x, y, w, h) in longbl0:
+        #    count += 5000
+        #for (x, y, w, h) in sword0:
+        #    count += 5000
+            
+        #self.count = count
+        
+        
+        #for (x, y, w, h) in hornRect:
+        #    cv2.rectangle(toDet, (x, y), (x+w, y +h), (10, 10, 200), 10)
+        #    count += 50  
+            #print("testing print function")
+            #with open() as f:
+            #    read_data = f.read()
+                
+            #if f.closed:
+            #    print("file already closed")
+            #file = os.open('rw+', str(count)+".txt")
+            #file.close()
+        #if count == 0:
+        #    count = -1
+        #if self.count >= 22222250000:
+        #    #print(str(self.count))
+        #    self.count = 0
+        #self.count = count
+        return toDet
+
+    def haar(self, img):
+        toDetect = img.copy()
+        
+        hornRect = self.lbpCascade.detectMultiScale(toDetect, scaleFactor = 1.2, minNeighbors = 25)
+        
+        for (x, y, w, h) in hornRect:
+            cv2.rectangle(toDetect, (x, y), (x+w, y+h), (10, 200, 10), 10)
+            
+        return toDetect
+
+    
 
 if __name__ == "__main__":
     #if len(sys.argv) != 4 :
@@ -438,30 +513,78 @@ if __name__ == "__main__":
     #vary 100 and 200 somehow
 
 
-
-
+    #import dector
+    vido = cv2.VideoCapture(0)
+    det = Detector()
+    p = Path('.')
+    [x for x in p.iterdir() if x.is_dir()]
+    l = list(p.glob('**/*.py'))
+    
     app = QApplication([])
+    recv = Receiver
+    inputb = InputBox()
+    threader = threading.Thread(target=recv)
+    #threader.show()
+    threader.start()
+    #print(l)
+    while(True):
+        #Get the video frame
+        try:
+            ret, frame = vido.read()
+        except e:
+            print(e)
+            #e as NoneType
+        #detect using lbp
+        toUseLBP = frame.copy()
+        im = det.lbp(toUseLBP)
+        #imm, e = det.lbp(toUseLBP)
+        
+        #if d > 0:
+        #    c = True
+        #    print(str(c))
+        #else:
+        #    c = False
+        #    print(str(c))
+        #if d == -1:
+        #    print("No detection")
+        #else:
+        #    c += d
+        
+        #detect using haar
+        #toUseHaar = frame.copy()
+        #im = det.haar(toUseHaar)
+        #print(str(c))
+        #Show the image
+        cv2.imshow('lbp vs haar', im)
+        
 
-    #widget = RocketWrite()
-    recv = Receiver()
-    input = InputBox()
-    #This is because consuming messages is a blocking function
-    #recv.drawLines()
-    input.show()
-    #pictureThread = threading.Thread(target=input)
-    #pictureThread.start()
-    #inputthread = threading.Thread(target=recv.drawLines)
-    #t = threading.Thread(target=recv.channel.start_consuming)
-    #widget.show()
-    #inputthread.start()
-    #input.show()
-    #t.start()
-    recv.drawLines()
 
-    #tt.start()
-    #bip = threading.Thread(target=Heartbeat.__init__)
-    #bip.start()
-    app.exec()
+        #widget = RocketWrite()
+        #This is because consuming messages is a blocking function
+        #recv.drawLines()
+        inputb.show()
+        #pictureThread = threading.Thread(target=input)
+        #pictureThread.start()
+        #inputthread = threading.Thread(target=recv.drawLines)
+        #t = threading.Thread(target=recv.channel.start_consuming)
+        #widget.show()
+        #inputthread.start()
+        #input.show()
+        #t.start()
+
+        #recv.start()
+        #recv.drawLines()
+
+        #tt.start()
+        #bip = threading.Thread(target=Heartbeat.__init__)
+        #bip.start()
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            #vido.close()    
+            vido.release()
+            cv2.destroyAllWindows()
+            break
+        app.exec()
     #This is because app.exec() was just wrapped in sys.exit()
     #and I need to do some closing
     #
