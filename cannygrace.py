@@ -202,45 +202,7 @@ class InputBox(QWidget):
     
 class Receiver(InputBox,QThread):
     x, y = 100, 200
-    vido = cv2.VideoCapture(0)
-    appengine = QApplication([])
-    
-    
-    
-    #img = 
     def run(self):
-        while True:
-            #    sel.show()
-                    #Get the video frame
-            try:
-                ret, frame = self.vido.read()
-            except e:
-                print(e)
-                #e as NoneType
-            #detect using lbp
-            toUseLBP = frame.copy()
-            im = det.lbp(toUseLBP)
-            #imm, e = det.lbp(toUseLBP)
-            
-            #if d > 0:
-            #    c = True
-            #    print(str(c))
-            #else:
-            #    c = False
-            #    print(str(c))
-            #if d == -1:
-            #    print("No detection")
-            #else:
-            #    c += d
-            
-            #detect using haar
-            #toUseHaar = frame.copy()
-            #im = det.haar(toUseHaar)
-            #print(str(c))
-            #Show the image
-            cv2.imshow('lbp vs haar', im)
-            
-
 
             #widget = RocketWrite()
             #This is because consuming messages is a blocking function
@@ -573,17 +535,53 @@ if __name__ == "__main__":
     img = cv.imread('../computer-vision/pp/combinedPositives1/115img.jpg',0)
     
     
+    vido = cv2.VideoCapture(0)
+    appengine = QApplication([])
     
+    det = Detector()
+    
+
+    #    sel.show()
+            #Get the video frame
+    try:
+        ret, frame = vido.read()
+    except e:
+        print(e)
+        #e as NoneType
+    #detect using lbp
+    toUseLBP = frame.copy()
+    im = det.lbp(toUseLBP)
+    #imm, e = det.lbp(toUseLBP)
+    
+    #if d > 0:
+    #    c = True
+    #    print(str(c))
+    #else:
+    #    c = False
+    #    print(str(c))
+    #if d == -1:
+    #    print("No detection")
+    #else:
+    #    c += d
+    
+    #detect using haar
+    #toUseHaar = frame.copy()
+    #im = det.haar(toUseHaar)
+    #print(str(c))
+    #Show the image
+    cv2.imshow('lbp vs haar', im)
+    
+
     
     #vary 100 and 200 somehow
 
 
     #import dector
     #vido = cv2.VideoCapture(0)
-    det = Detector()
-    p = Path('.')
-    [x for x in p.iterdir() if x.is_dir()]
-    l = list(p.glob('**/*.py'))
+    #det = Detector()
+    #p = Path('.')
+    #[x for x in p.iterdir() if x.is_dir()]
+    #l = list(p.glob('**/*.py'))
     
     #app = QApplication([])
     recv = Receiver()
@@ -596,7 +594,7 @@ if __name__ == "__main__":
     recv.show()
     print("doot")
     det.show()
-    recv.appengine.exec()
+    #recv.appengine.exec()
     #app.exec()
     #app.destroy()
     #print(l)
