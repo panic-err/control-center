@@ -26,7 +26,7 @@ import datetime
 from PySide6.QtQuick import QQuickWindow
 from PySide6.QtGui import Qt
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
-from PySide6.QtCore import QUrl, Qt, Slot, Property
+from PySide6.QtCore import QUrl, Qt, Slot, Property, QThread
 from PySide6.QtWidgets import (QWidget, QProgressBar, QFrame, QGraphicsScene, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout, QSlider)
 #from __feature__ import snake_case
 
@@ -200,7 +200,7 @@ class InputBox(QWidget):
         #self.message.text = random.choice(self.hello)
 #class Heartbeat(threading.Thread):
     
-class Receiver(InputBox,threading.Thread):
+class Receiver(InputBox,QThread):
     x, y = 100, 200
     vido = cv2.VideoCapture(0)
     appengine = QApplication([])
@@ -209,67 +209,68 @@ class Receiver(InputBox,threading.Thread):
     
     #img = 
     def run(self):
-        #while True:
-        #    sel.show()
-                #Get the video frame
-        try:
-            ret, frame = self.vido.read()
-        except e:
-            print(e)
-            #e as NoneType
-        #detect using lbp
-        toUseLBP = frame.copy()
-        im = det.lbp(toUseLBP)
-        #imm, e = det.lbp(toUseLBP)
-        
-        #if d > 0:
-        #    c = True
-        #    print(str(c))
-        #else:
-        #    c = False
-        #    print(str(c))
-        #if d == -1:
-        #    print("No detection")
-        #else:
-        #    c += d
-        
-        #detect using haar
-        #toUseHaar = frame.copy()
-        #im = det.haar(toUseHaar)
-        #print(str(c))
-        #Show the image
-        cv2.imshow('lbp vs haar', im)
-        
+        while True:
+            #    sel.show()
+                    #Get the video frame
+            try:
+                ret, frame = self.vido.read()
+            except e:
+                print(e)
+                #e as NoneType
+            #detect using lbp
+            toUseLBP = frame.copy()
+            im = det.lbp(toUseLBP)
+            #imm, e = det.lbp(toUseLBP)
+            
+            #if d > 0:
+            #    c = True
+            #    print(str(c))
+            #else:
+            #    c = False
+            #    print(str(c))
+            #if d == -1:
+            #    print("No detection")
+            #else:
+            #    c += d
+            
+            #detect using haar
+            #toUseHaar = frame.copy()
+            #im = det.haar(toUseHaar)
+            #print(str(c))
+            #Show the image
+            cv2.imshow('lbp vs haar', im)
+            
 
 
-        #widget = RocketWrite()
-        #This is because consuming messages is a blocking function
-        #recv.drawLines()
-        inputb.show()
-        #pictureThread = threading.Thread(target=input)
-        #pictureThread.start()
-        #inputthread = threading.Thread(target=recv.drawLines)
-        #t = threading.Thread(target=recv.channel.start_consuming)
-        #widget.show()
-        #inputthread.start()
-        #input.show()
-        #t.start()
+            #widget = RocketWrite()
+            #This is because consuming messages is a blocking function
+            #recv.drawLines()
+            inputb.show()
+            #pictureThread = threading.Thread(target=input)
+            #pictureThread.start()
+            #inputthread = threading.Thread(target=recv.drawLines)
+            #t = threading.Thread(target=recv.channel.start_consuming)
+            #widget.show()
+            #inputthread.start()
+            #input.show()
+            #t.start()
 
-        #recv.start()
-        #recv.drawLines()
+            #recv.start()
+            #recv.drawLines()
 
-        #tt.start()
-        #bip = threading.Thread(target=Heartbeat.__init__)
-        #bip.start()
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            #vido.close()    
-            vido.release()
-            cv2.destroyAllWindows()
-            #break
-        self.appengine.exec()
+            #tt.start()
+            #bip = threading.Thread(target=Heartbeat.__init__)
+            #bip.start()
+            
+            print("dootinstart")
+            #if cv2.waitKey(1) & 0xFF == ord('q'):
+            #    #vido.close()    
+            #    #vido.release()
+            #    #cv2.destroyAllWindows()
+            #    print("Doot in start")
+            #    #break
+            #self.appengine.exec()
 
-        print("dootinstart")
     def __init__(self):
         threading.Thread.__init__(self)
     @Slot()
@@ -590,6 +591,8 @@ if __name__ == "__main__":
     #threader = threading.Thread(target=recv)
     #threader.show()
     #threader.start()
+    threadee = threading.Thread(target=recv.run)
+    threadee.start()
     recv.show()
     print("doot")
     det.show()
