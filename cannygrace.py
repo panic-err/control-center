@@ -569,12 +569,6 @@ if __name__ == "__main__":
     det = Detector()
     
     recv = Receiver()
-    edges = cv.Canny(toUseLBP, recv.xVal, 200)
-    
-    #plt.subplot(121),plt.imshow(img,cmap = 'gray')
-    #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
-    plt.subplot(122),plt.imshow(edges,cmap = 'gray')
-    plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
 
     im = det.lbp(toUseLBP)
 
@@ -596,6 +590,13 @@ if __name__ == "__main__":
     #im = det.haar(toUseHaar)
     #print(str(c))
     #Show the image
+    edges = cv.Canny(toUseLBP, recv.xVal, 200)
+    
+    #plt.subplot(121),plt.imshow(img,cmap = 'gray')
+    #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
+    plt.subplot(122),plt.imshow(edges,cmap = 'gray')
+    plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
+
     cv2.imshow('lbp vs haar', im)
     
 
@@ -630,6 +631,14 @@ if __name__ == "__main__":
         #detect using lbp
         toUseLBP = frame.copy()
         im = det.lbp(toUseLBP)
+        toCanny = im.copy()
+        edges = cv.Canny(toCanny, recv.xVal, 200)
+        
+        #plt.subplot(121),plt.imshow(img,cmap = 'gray')
+        #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
+        plt.subplot(122),plt.imshow(edges,cmap = 'gray')
+        plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
+
         #imm, e = det.lbp(toUseLBP)
         
         #if d > 0:
@@ -648,7 +657,7 @@ if __name__ == "__main__":
         #im = det.haar(toUseHaar)
         #print(str(c))
         #Show the image
-        cv2.imshow('lbp vs haar', im)
+        cv2.imshow('lbp vs haar', edges)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             #vido.close()    
             vido.release()
