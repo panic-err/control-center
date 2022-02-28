@@ -233,8 +233,17 @@ class Receiver(InputBox,QThread):
             #    #break
             #self.appengine.exec()
 
-    def __init__(self):
+    def __init__(self, startval=100):
         threading.Thread.__init__(self)
+        QObject.__init__(self)
+        self.x = startval
+    @Property(int)
+    def xVal(self):
+        return self.x
+    @xVal.setter
+    def xVal(self, val):
+        self.x = val
+    
     @Slot()
     def increaseX(self):
         self.x += 1
@@ -305,6 +314,7 @@ class Receiver(InputBox,QThread):
             sys.exit()
     @Slot()
     def dig(self):
+        self.y += 1
         butt = self.focusWidget()
         if self.spacers[butt.position].coord <= 10:
             self.spacers[butt.position].coord -= 1
@@ -313,6 +323,7 @@ class Receiver(InputBox,QThread):
             self.spacers[butt.position].coord = 10
     @Slot()
     def surface(self):
+        self.x += 1
         butt = self.focusWidget()
         if self.spacers[butt.position].coord >= 0:
             self.spacers[butt.position].coord += 1
@@ -384,6 +395,7 @@ class Receiver(InputBox,QThread):
             if i < 10:
                 nameButton = QPushButton("+")
                 nameButton.position = i
+                nameButton.clicked.connect(self.increaseX)
                 nameButton.clicked.connect(self.surface)
             else:
                 nameButton = QPushButton("NAME")
@@ -394,6 +406,8 @@ class Receiver(InputBox,QThread):
                 button = QPushButton("-")
                 button.position = i
                 button.clicked.connect(self.dig)
+            elif i <= 20:
+                button = QPushButton("addtoX")
             else:
                 button = QPushButton(str(i))
             if i == 10:
@@ -411,10 +425,11 @@ class Receiver(InputBox,QThread):
                 self.senders.append(head)
                 self.layout.addWidget(head, i, 3)
             else:
-                print("And a small green alien that only homer can see")
+                #print("And a small green alien that only homer can see")
                 send = QPushButton("SEND")
                 send.setStyleSheet("color:aqua;")
                 send.position = i
+                #send.clicked.connect(
                 #send.clicked.connect(self.greetNoColour)
                 #button.clicked.connect(self.greet)
                 self.senders.append(send)
@@ -550,7 +565,19 @@ if __name__ == "__main__":
         #e as NoneType
     #detect using lbp
     toUseLBP = frame.copy()
+    
+    det = Detector()
+    
+    recv = Receiver()
+    edges = cv.Canny(toUseLBP, recv.xVal, 200)
+    
+    #plt.subplot(121),plt.imshow(img,cmap = 'gray')
+    #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
+    plt.subplot(122),plt.imshow(edges,cmap = 'gray')
+    plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
+
     im = det.lbp(toUseLBP)
+
     #imm, e = det.lbp(toUseLBP)
     
     #if d > 0:
@@ -584,7 +611,6 @@ if __name__ == "__main__":
     #l = list(p.glob('**/*.py'))
     
     #app = QApplication([])
-    recv = Receiver()
     inputb = InputBox()
     #threader = threading.Thread(target=recv)
     #threader.show()
@@ -592,8 +618,44 @@ if __name__ == "__main__":
     threadee = threading.Thread(target=recv.run)
     threadee.start()
     recv.show()
+    
     print("doot")
     det.show()
+    while(True):
+        try:
+            ret, frame = vido.read()
+        except e:
+            print(e)
+            #e as NoneType
+        #detect using lbp
+        toUseLBP = frame.copy()
+        im = det.lbp(toUseLBP)
+        #imm, e = det.lbp(toUseLBP)
+        
+        #if d > 0:
+        #    c = True
+        #    print(str(c))
+        #else:
+        #    c = False
+        #    print(str(c))
+        #if d == -1:
+        #    print("No detection")
+        #else:
+        #    c += d
+        
+        #detect using haar
+        #toUseHaar = frame.copy()
+        #im = det.haar(toUseHaar)
+        #print(str(c))
+        #Show the image
+        cv2.imshow('lbp vs haar', im)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            #vido.close()    
+            vido.release()
+            #cv2.destroyAllWindows()
+            print("quitting...")
+            break
+    cv2.destroyAllWindows()
     #recv.appengine.exec()
     #app.exec()
     #app.destroy()
