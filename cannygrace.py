@@ -469,8 +469,9 @@ class Detector(Receiver,object):
     def lbp(self, img):
         toDetect = img.copy()
         self.count = 0
-        toDet = cv2.cvtColor(toDetect, cv2.COLOR_BGR2GRAY)
-        t = toDet.copy()
+        #toDet = cv2.cvtColor(toDetect, cv2.COLOR_BGR2GRAY)
+        #t = toDet.copy()
+        
         #hornRect = self.lbpCascade.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #wakizashi0 = self.wakizashi.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #bastardsword0 = self.bastardsword.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
@@ -478,14 +479,14 @@ class Detector(Receiver,object):
         #fouram0 = self.fouram.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #longbl0 = self.longbl.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #sword0 = self.sword.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
-        clay0 = self.libpClay.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        clay0 = self.libpClay.detectMultiScale(toDetect, scaleFactor = 1.2, minNeighbors = 5)
         
         for (x, y, w, h) in clay0:
             #if (x <= 239):
             print("Found {0} hands!".format(len(clay0)))
             #self.count += 5*len(clay0)
             #if self.count >= 5:
-            cv2.rectangle(toDet, (x, y), (x+w, y+h), (10, 10, 200), 10)
+            cv2.rectangle(toDetect, (x, y), (x+w, y+h), (10, 10, 200), 10)
             #    self.count -= 2
             #    self.count = 0
             #cv2.imwrite(str(self.count)+'img.jpg', t)
@@ -527,7 +528,7 @@ class Detector(Receiver,object):
         #    #print(str(self.count))
         #    self.count = 0
         #self.count = count
-        return toDet
+        return toDetect
 
     def haar(self, img):
         toDetect = img.copy()
@@ -630,10 +631,12 @@ if __name__ == "__main__":
             #e as NoneType
         #detect using lbp
         toUseLBP = frame.copy()
-        im = det.lbp(toUseLBP)
-        toCanny = im.copy()
-        edges = cv.Canny(toCanny, recv.xVal, 200)
-        
+        #im = det.lbp(toUseLBP)
+        #toDet = cv2.cvtColor(toUseLBP, cv2.COLOR_BGR2GRAY)
+        #toCanny = toDet.copy()
+        #toCanny = im.copy()
+        edges = cv.Canny(toUseLBP, recv.xVal, 200)
+        edgeDet = det.lbp(edges)
         #plt.subplot(121),plt.imshow(img,cmap = 'gray')
         #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
         plt.subplot(122),plt.imshow(edges,cmap = 'gray')
