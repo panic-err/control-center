@@ -83,7 +83,7 @@ class InputBox(QWidget):
         self.layout.verticalSpacing()
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
-        for i in range(1):
+        for i in range(2):
             self.setWindowTitle("Input Bar")
             mess = QLineEdit("Messages!")
             mess.position = i
