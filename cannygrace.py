@@ -92,8 +92,9 @@ class InputBox(QWidget):
             self.greeters.append(mess)
             mess.setStyleSheet("color:aqua;")
             self.layout.addWidget(mess, i, 0)
-            nameButton = QPushButton('PLACEHOLDER')
-            nameButton.clicked.connect(self.name_detail)
+            #nameButton = QPushButton('PLACEHOLDER')
+            nameButton = QSlider()
+            #nameButton.clicked.connect(self.name_detail)
             nameButton.setStyleSheet("color:aqua;")
             self.layout.addWidget(nameButton, i, 1)
             button = QPushButton(str(i))
@@ -247,12 +248,14 @@ class Receiver(InputBox,QThread):
     @Slot()
     def increaseX(self):
         self.x += 1
+        print("Increasing X")
     @Slot()
     def increaseY(self):
         self.y += 1
     @Slot()
     def decreaseX(self):
         self.x -= 1
+        print("Decreasing X")
     @Slot()
     def decreaseY(self):
         self.y -= 1
@@ -408,6 +411,13 @@ class Receiver(InputBox,QThread):
                 button.clicked.connect(self.dig)
             elif i <= 20:
                 button = QPushButton("addtoX")
+                button.clicked.connect(self.increaseX)
+            elif i <= 24:
+                button = QPushButton("decreaseX")
+                button.clicked.connect(self.decreaseX)
+            elif i <= 25:
+                button = QPushButton("increaseX")
+                button.clicked.connect(self.increaseX)
             else:
                 button = QPushButton(str(i))
             if i == 10:
@@ -613,6 +623,8 @@ if __name__ == "__main__":
     #l = list(p.glob('**/*.py'))
     
     #app = QApplication([])
+    #slider = QSlider()
+    
     inputb = InputBox()
     #threader = threading.Thread(target=recv)
     #threader.show()
@@ -635,7 +647,8 @@ if __name__ == "__main__":
         #toDet = cv2.cvtColor(toUseLBP, cv2.COLOR_BGR2GRAY)
         #toCanny = toDet.copy()
         #toCanny = im.copy()
-        edges = cv.Canny(toUseLBP, recv.xVal, 200)
+        edges = cv.Canny(toUseLBP, recv.x, 200)
+        print(str(recv.x))
         edgeDet = det.lbp(edges)
         #plt.subplot(121),plt.imshow(img,cmap = 'gray')
         #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
