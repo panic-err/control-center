@@ -33,7 +33,7 @@ class Detector(object):
         #fouram0 = self.fouram.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #longbl0 = self.longbl.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #sword0 = self.sword.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
-        clay0 = self.libpClay.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
+        clay0 = self.libpClay.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 3)
         
         for (x, y, w, h) in clay0:
             #if (x <= 239):
@@ -100,6 +100,10 @@ p = Path('.')
 [x for x in p.iterdir() if x.is_dir()]
 l = list(p.glob('**/*.py'))
 #print(l)
+
+
+
+
 while(True):
     #Get the video frame
     try:
