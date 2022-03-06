@@ -26,7 +26,7 @@ import datetime
 from PySide6.QtQuick import QQuickWindow
 from PySide6.QtGui import Qt
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
-from PySide6.QtCore import QUrl, Qt, Slot, Property, QThread
+from PySide6.QtCore import QUrl, Qt, Slot, Property, QThread, QObject
 from PySide6.QtWidgets import (QWidget, QProgressBar, QFrame, QGraphicsScene, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout, QSlider)
 #from __feature__ import snake_case
 
@@ -37,7 +37,7 @@ import cv2 as cv
 from matplotlib import pyplot as plt
 
 
-class InputBox(QWidget):
+class InputBox(QWidget,QObject):
 
     def calc_red(self):
         red = randint(1, 255)
@@ -58,7 +58,7 @@ class InputBox(QWidget):
         self.blue = str(blue)
         return blue
 
-    
+
 
 
     def __init__(self):
@@ -172,10 +172,10 @@ class InputBox(QWidget):
         #self.nameDetail.setText(outString)
         self.nameDetail.resize(450, 500)
         self.nameDetail.setStyleSheet("background:black;font:Courier New;color:pink;")
-        self.nameDetail.show()        
-        
+        self.nameDetail.show()
+
         butt = self.focusWidget()
-        
+
         print("Butt  number"+str(butt.position))
         print(self.greeters[butt.position].text())
         print(butt.position)
@@ -200,9 +200,10 @@ class InputBox(QWidget):
         print("boop")
         #self.message.text = random.choice(self.hello)
 #class Heartbeat(threading.Thread):
-    
-class Receiver(InputBox,QThread):
+
+class Receiver(InputBox,QThread,QSlider):
     x, y = 100, 200
+
     def run(self):
 
             #widget = RocketWrite()
@@ -224,27 +225,22 @@ class Receiver(InputBox,QThread):
             #tt.start()
             #bip = threading.Thread(target=Heartbeat.__init__)
             #bip.start()
-            
+
             print("dootinstart")
             #if cv2.waitKey(1) & 0xFF == ord('q'):
-            #    #vido.close()    
+            #    #vido.close()
             #    #vido.release()
             #    #cv2.destroyAllWindows()
             #    print("Doot in start")
             #    #break
             #self.appengine.exec()
-
-    def __init__(self, startval=100):
-        threading.Thread.__init__(self)
-        QObject.__init__(self)
-        self.x = startval
     @Property(int)
     def xVal(self):
         return self.x
     @xVal.setter
     def xVal(self, val):
         self.x = val
-    
+
     @Slot()
     def increaseX(self):
         self.x += 1
@@ -264,9 +260,9 @@ class Receiver(InputBox,QThread):
             self.show()
     def drawLines(self):
         img = cv.imread('stills/horns.jpg',0)
-        
+
         edges = cv.Canny(img, self.x, self.y)
-        
+
         plt.subplot(121),plt.imshow(img,cmap = 'gray')
         plt.title('Original Image'),plt.xticks([]), plt.yticks([])
         plt.subplot(122),plt.imshow(edges,cmap = 'gray')
@@ -335,7 +331,7 @@ class Receiver(InputBox,QThread):
             self.spacers[butt.position].coord = 0
 
 
- 
+
     def __init__(self):
         #t = threading.Thread(Heartbeat.__init__)
         #t.start()
@@ -344,11 +340,16 @@ class Receiver(InputBox,QThread):
         #t = threading.Thread(bep.run)
         #t.start()
         #bep.start()
-    
+        threading.Thread.__init__(self)
+        #QObject.__init__(self)
+        startval = 50
+        self.x = startval
         self.position = 0
 
 
         QWidget.__init__(self)
+        #QSlider.__init__(self)
+
         self.hello =  [
                 "hallo",
                 "hi",
@@ -369,7 +370,12 @@ class Receiver(InputBox,QThread):
         #self.layout = QGridLayout(self)
         for i in range(28):
             self.setWindowTitle("Main")
-            if i >= 6:
+            if i <= 2:
+                mess = QSlider()
+                mess.position = i
+                mess.coord = 2
+                mess.show()
+            elif i > 2:
                 mess = QLineEdit("Messages!")
                 mess.position = i
                 mess.coord = 8
@@ -461,7 +467,7 @@ class Receiver(InputBox,QThread):
         #self.channel.start_consuming()
 
 class Detector(Receiver,object):
-    
+
     #lbp
     #wakizashi = cv2.CascadeClassifier('cascades/wakizashi.xml')
     #count = 0
@@ -475,13 +481,13 @@ class Detector(Receiver,object):
     count = 0
     #haar
     #haarCascade = cv2.CascadeClassifier('cascades/haar.xml')
-    
+
     def lbp(self, img):
         toDetect = img.copy()
         self.count = 0
         #toDet = cv2.cvtColor(toDetect, cv2.COLOR_BGR2GRAY)
         #t = toDet.copy()
-        
+
         #hornRect = self.lbpCascade.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #wakizashi0 = self.wakizashi.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #bastardsword0 = self.bastardsword.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
@@ -490,7 +496,7 @@ class Detector(Receiver,object):
         #longbl0 = self.longbl.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         #sword0 = self.sword.detectMultiScale(toDet, scaleFactor = 1.2, minNeighbors = 5)
         clay0 = self.libpClay.detectMultiScale(toDetect, scaleFactor = 1.2, minNeighbors = 5)
-        
+
         for (x, y, w, h) in clay0:
             #if (x <= 239):
             print("Found {0} hands!".format(len(clay0)))
@@ -502,8 +508,8 @@ class Detector(Receiver,object):
             #cv2.imwrite(str(self.count)+'img.jpg', t)
             #self.count += 1
             #print("writing out image"+str(self.count))
-                
-        
+
+
         #for (x, y, w, h) in wakizashi0:
         #    count += 5000
         #for (x, y, w, h) in bastardsword0:
@@ -517,17 +523,17 @@ class Detector(Receiver,object):
         #    count += 5000
         #for (x, y, w, h) in sword0:
         #    count += 5000
-            
+
         #self.count = count
-        
-        
+
+
         #for (x, y, w, h) in hornRect:
         #    cv2.rectangle(toDet, (x, y), (x+w, y +h), (10, 10, 200), 10)
-        #    count += 50  
+        #    count += 50
         #print("testing print function")
         #with open() as f:
         #    read_data = f.read()
-            
+
         #if f.closed:
         #    print("file already closed")
         #file = os.open('rw+', str(count)+".txt")
@@ -542,15 +548,15 @@ class Detector(Receiver,object):
 
     def haar(self, img):
         toDetect = img.copy()
-        
+
         hornRect = self.lbpCascade.detectMultiScale(toDetect, scaleFactor = 1.2, minNeighbors = 25)
-        
+
         for (x, y, w, h) in hornRect:
             cv2.rectangle(toDetect, (x, y), (x+w, y+h), (10, 200, 10), 10)
-            
+
         return toDetect
 
-    
+
 
 
 if __name__ == "__main__":
@@ -559,13 +565,13 @@ if __name__ == "__main__":
     #    sys.exit()
 
     img = cv.imread('../computer-vision/pp/combinedPositives1/115img.jpg',0)
-    
-    
+
+
     vido = cv2.VideoCapture(0)
     appengine = QApplication([])
-    
+
     det = Detector()
-    
+
 
     #    sel.show()
             #Get the video frame
@@ -576,15 +582,15 @@ if __name__ == "__main__":
         #e as NoneType
     #detect using lbp
     toUseLBP = frame.copy()
-    
+
     det = Detector()
-    
+
     recv = Receiver()
 
     im = det.lbp(toUseLBP)
 
     #imm, e = det.lbp(toUseLBP)
-    
+
     #if d > 0:
     #    c = True
     #    print(str(c))
@@ -595,23 +601,23 @@ if __name__ == "__main__":
     #    print("No detection")
     #else:
     #    c += d
-    
+
     #detect using haar
     #toUseHaar = frame.copy()
     #im = det.haar(toUseHaar)
     #print(str(c))
     #Show the image
     edges = cv.Canny(toUseLBP, recv.xVal, 200)
-    
+
     #plt.subplot(121),plt.imshow(img,cmap = 'gray')
     #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
     plt.subplot(122),plt.imshow(edges,cmap = 'gray')
     plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
 
     cv2.imshow('lbp vs haar', im)
-    
 
-    
+
+
     #vary 100 and 200 somehow
 
 
@@ -621,10 +627,10 @@ if __name__ == "__main__":
     #p = Path('.')
     #[x for x in p.iterdir() if x.is_dir()]
     #l = list(p.glob('**/*.py'))
-    
+
     #app = QApplication([])
     #slider = QSlider()
-    
+
     inputb = InputBox()
     #threader = threading.Thread(target=recv)
     #threader.show()
@@ -632,7 +638,7 @@ if __name__ == "__main__":
     threadee = threading.Thread(target=recv.run)
     threadee.start()
     recv.show()
-    
+
     print("doot")
     det.show()
     while(True):
@@ -647,7 +653,7 @@ if __name__ == "__main__":
         #toDet = cv2.cvtColor(toUseLBP, cv2.COLOR_BGR2GRAY)
         #toCanny = toDet.copy()
         #toCanny = im.copy()
-        edges = cv.Canny(toUseLBP, recv.x, 200)
+        edges = cv.Canny(toUseLBP, int(recv.greeters[0].tickPosition()), int(recv.greeters[1].tickPosition()))
         print(str(recv.x))
         edgeDet = det.lbp(edges)
         #plt.subplot(121),plt.imshow(img,cmap = 'gray')
@@ -656,7 +662,7 @@ if __name__ == "__main__":
         plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
 
         #imm, e = det.lbp(toUseLBP)
-        
+
         #if d > 0:
         #    c = True
         #    print(str(c))
@@ -667,7 +673,7 @@ if __name__ == "__main__":
         #    print("No detection")
         #else:
         #    c += d
-        
+
         #detect using haar
         #toUseHaar = frame.copy()
         #im = det.haar(toUseHaar)
@@ -675,7 +681,7 @@ if __name__ == "__main__":
         #Show the image
         cv2.imshow('lbp vs haar', edges)
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            #vido.close()    
+            #vido.close()
             vido.release()
             #cv2.destroyAllWindows()
             print("quitting...")
