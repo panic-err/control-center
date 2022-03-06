@@ -209,7 +209,7 @@ class Receiver(InputBox,QThread,QSlider):
             #widget = RocketWrite()
             #This is because consuming messages is a blocking function
             #recv.drawLines()
-            inputb.show()
+            #inputb.show()
             #pictureThread = threading.Thread(target=input)
             #pictureThread.start()
             #inputthread = threading.Thread(target=recv.drawLines)
@@ -255,9 +255,9 @@ class Receiver(InputBox,QThread,QSlider):
     @Slot()
     def decreaseY(self):
         self.y -= 1
-    def updateScreen(self):
-        while True:
-            self.show()
+    #def updateScreen(self):
+    #    #while True:
+    #    #    #self.show()
     def drawLines(self):
         img = cv.imread('stills/horns.jpg',0)
 
@@ -332,11 +332,11 @@ class Receiver(InputBox,QThread,QSlider):
     @Slot()
     def setA(self):
 
-        self.x = self.greeters[1].value()
+        self.x = self.greeters[0].value()
         print("Setting A to : "+str(self.x))
     @Slot()
     def setB(self):
-        self.y = self.greeters[2].value()
+        self.y = self.greeters[1].value()
         print("Setting B to : " + str(self.y))
 
 
@@ -378,23 +378,23 @@ class Receiver(InputBox,QThread,QSlider):
         #self.layout = QGridLayout(self)
         for i in range(28):
             self.setWindowTitle("Main")
-            if i <= 2:
+            if i < 2:
                 mess = QSlider(Qt.Horizontal, self)
                 mess.position = i
                 mess.coord = 2
-                if i == 1:
+                if i == 0:
                     mess.setSingleStep(1)
                     mess.setMinimum(1)
                     mess.setMaximum(100)
                     mess.valueChanged[int].connect(self.setA)
-                if i == 2:
+                if i == 1:
                     mess.setSingleStep(1)
                     mess.setMinimum(1)
                     mess.setMaximum(200)
                     #mess.setTickInterval(200)
                     mess.valueChanged[int].connect(self.setB)
                 #mess.show()
-            elif i > 2:
+            elif i >= 2:
                 mess = QLineEdit("Messages!")
                 mess.position = i
                 mess.coord = 8
@@ -485,7 +485,7 @@ class Receiver(InputBox,QThread,QSlider):
         self.show()
         #self.channel.start_consuming()
 
-class Detector(Receiver,object):
+class Detector(object):
 
     #lbp
     #wakizashi = cv2.CascadeClassifier('cascades/wakizashi.xml')
@@ -626,7 +626,7 @@ if __name__ == "__main__":
     #im = det.haar(toUseHaar)
     #print(str(c))
     #Show the image
-    edges = cv.Canny(toUseLBP, recv.greeters[1].value(), recv.greeters[2].value())
+    edges = cv.Canny(toUseLBP, recv.greeters[0].value(), recv.greeters[1].value())
 
     #plt.subplot(121),plt.imshow(img,cmap = 'gray')
     #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
@@ -656,10 +656,10 @@ if __name__ == "__main__":
     #threader.start()
     threadee = threading.Thread(target=recv.run)
     threadee.start()
-    recv.show()
+    #recv.show()
 
     print("doot")
-    det.show()
+    #det.show()
     while(True):
         try:
             ret, frame = vido.read()
@@ -672,7 +672,7 @@ if __name__ == "__main__":
         #toDet = cv2.cvtColor(toUseLBP, cv2.COLOR_BGR2GRAY)
         #toCanny = toDet.copy()
         #toCanny = im.copy()
-        edges = cv.Canny(toUseLBP, int(recv.greeters[1].value()), int(recv.greeters[2].value()))
+        edges = cv.Canny(toUseLBP, int(recv.greeters[0].value()), int(recv.greeters[1].value()))
         #print("A is : " + str(recv.greeters[0].tickPosition()))
         #print("B is : " + str(recv.greeters[1].tickPosition()))
         edgeDet = det.lbp(edges)
