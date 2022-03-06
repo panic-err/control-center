@@ -329,7 +329,15 @@ class Receiver(InputBox,QThread,QSlider):
             self.spacers[butt.position].setValue(self.spacers[butt.position].coord)
         elif self.spacers[butt.position].coord < 0:
             self.spacers[butt.position].coord = 0
+    @Slot()
+    def setA(self):
 
+        self.x = self.greeters[1].value()
+        print("Setting A to : "+str(self.x))
+    @Slot()
+    def setB(self):
+        self.y = self.greeters[2].value()
+        print("Setting B to : " + str(self.y))
 
 
     def __init__(self):
@@ -371,10 +379,21 @@ class Receiver(InputBox,QThread,QSlider):
         for i in range(28):
             self.setWindowTitle("Main")
             if i <= 2:
-                mess = QSlider()
+                mess = QSlider(Qt.Horizontal, self)
                 mess.position = i
                 mess.coord = 2
-                mess.show()
+                if i == 1:
+                    mess.setSingleStep(1)
+                    mess.setMinimum(1)
+                    mess.setMaximum(100)
+                    mess.valueChanged[int].connect(self.setA)
+                if i == 2:
+                    mess.setSingleStep(1)
+                    mess.setMinimum(1)
+                    mess.setMaximum(200)
+                    #mess.setTickInterval(200)
+                    mess.valueChanged[int].connect(self.setB)
+                #mess.show()
             elif i > 2:
                 mess = QLineEdit("Messages!")
                 mess.position = i
@@ -607,7 +626,7 @@ if __name__ == "__main__":
     #im = det.haar(toUseHaar)
     #print(str(c))
     #Show the image
-    edges = cv.Canny(toUseLBP, recv.xVal, 200)
+    edges = cv.Canny(toUseLBP, recv.greeters[1].value(), recv.greeters[2].value())
 
     #plt.subplot(121),plt.imshow(img,cmap = 'gray')
     #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
@@ -653,8 +672,9 @@ if __name__ == "__main__":
         #toDet = cv2.cvtColor(toUseLBP, cv2.COLOR_BGR2GRAY)
         #toCanny = toDet.copy()
         #toCanny = im.copy()
-        edges = cv.Canny(toUseLBP, int(recv.greeters[0].tickPosition()), int(recv.greeters[1].tickPosition()))
-        print(str(recv.x))
+        edges = cv.Canny(toUseLBP, int(recv.greeters[1].value()), int(recv.greeters[2].value()))
+        #print("A is : " + str(recv.greeters[0].tickPosition()))
+        #print("B is : " + str(recv.greeters[1].tickPosition()))
         edgeDet = det.lbp(edges)
         #plt.subplot(121),plt.imshow(img,cmap = 'gray')
         #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
