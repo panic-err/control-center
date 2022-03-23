@@ -132,15 +132,28 @@ with dai.Device(pipeline) as device:
             print(str(type(data)))
             print(str(data.shape))
             shape = (3110400,)
-            dataBlob = pd.DataFrame(dict(zip(columns, data)))
-            mask = dataBlob.dtypes==int
             
-            a = np.zeros(shape, dtype=float, order='C')
-            print(str(a))
-            print(str(type(a)))
-            a = np.multiply(data, data)
-            print(str(a))
-            print(str(a.shape))
+            dataBlobZeros = np.empty(shape, dtype=np.float64, order='C')
+            dataArray = np.array(data, dtype=np.float64, order='C')
+            
+            
+            dataBlob = pd.DataFrame(dataArray)
+            #find columns of type int
+            mask = dataBlob.dtypes==np.float64
+            #select columns for the same
+            cols = dataBlob.dtypes[mask].index
+            #select these columns and convert to float
+            dataBlobNew = dataBlob[cols].apply(lambda x: x.multiply(x, x))
+            dataBlob[dataBlobNew.columns] = dataBlobNew
+            print(str(dataBlob))
+            print(str(type(dataBlob)))
+            
+            #a = np.zeros(shape, dtype=float, order='C')
+            #print(str(a))
+            #print(str(type(a)))
+            #a = np.multiply(data, data)
+            #print(str(a))
+            #print(str(a.shape))
         if holdLeft is not None and holdRight is not None:
             count += 1
             #print(inLeft)
