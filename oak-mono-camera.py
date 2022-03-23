@@ -23,9 +23,9 @@ xoutLeft.setStreamName('left')
 xoutRight.setStreamName('right')
 
 monoRight.setBoardSocket(dai.CameraBoardSocket.RIGHT)
-monoRight.setResolution(dai.MonoCameraProperties.SensorResolution.THE_720_P)
+monoRight.setResolution(dai.MonoCameraProperties.SensorResolution.THE_480_P)
 monoLeft.setBoardSocket(dai.CameraBoardSocket.LEFT)
-monoLeft.setResolution(dai.MonoCameraProperties.SensorResolution.THE_720_P)
+monoLeft.setResolution(dai.MonoCameraProperties.SensorResolution.THE_480_P)
 
 monoLeft.out.link(xoutLeft.input)
 monoRight.out.link(xoutRight.input)
@@ -54,21 +54,34 @@ with dai.Device(pipeline) as device:
 
     qLeft = device.getOutputQueue(name="left", maxSize=4, blocking=False)
     qRight = device.getOutputQueue(name="right", maxSize=4, blocking=False)
-    
+    count = 0
+    t = datetime.datetime.now()  
+    tprevious = datetime.datetime.now()
+    measurement = 0.0
     while True:
-        t = datetime.datetime.now()
+
         inLeft = qLeft.tryGet()
         inRight = qRight.tryGet()
         
         if inLeft is not None and inRight is not None:
+            count += 1
             print(inLeft)
             t2 = datetime.datetime.now()
-            c = t - t2
-            print("Time is : " + str(c.total_seconds()*1000))
+            
+            c = t2 - t
+            tprevious = c
+            smoothing = 0.9
+            measurement = (measurement * smoothing) + (tprevious.total_seconds() * (1.0-smoothing))
+            print("Time for both frames is : " + str(c.total_seconds()*1000))
+            
+            fps = 1/(measurement)
+            print("FPS is " + str(fps))
+            t = datetime.datetime.now()
             cv2.imshow("monoforall", inLeft.getCvFrame())
             print(inRight)
             cv2.imshow("Right", inRight.getCvFrame())
         
+    
         if cv2.waitKey(1) == ord('q'):
             
             break

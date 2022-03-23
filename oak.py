@@ -4,7 +4,13 @@ import depthai as dai
 import cv2
 
 pipeline = dai.Pipeline()
-cam = pipeline.create(dai.node.ColorCamera)
+
+#pipeline.setCameraTuningBlobPath('../computer-vision/mono-colourspace/tuning_color_low_light.bin')
+#cam = pipeline.create(dai.node.ColorCamera)
+pipeline.setCameraTuningBlobPath('../computer-vision/mono-colourspace/tuning_mono_low_light.bin')
+cam = pipeline.create(dai.node.MonoCamera)
+
+
 PreviewSize = (300, 300)
 
 XLinkIn = pipeline.create(dai.node.XLinkIn)
@@ -34,14 +40,14 @@ with dai.Device() as device:
     print('USB Speed:', device.getUsbSpeed())
     print('Connected Cameras:', device.getConnectedCameras())
     
-    input_q = device.getInputQueue("input_stream")
-    output_q = device.getOutputQueue("output_stream", maxSize=1, blocking=False)
+    input_q = device.getInputQueue(cam.getStreamName())
+    output_q = device.getOutputQueue(cam.getStreamName(), maxSize=1, blocking=False)
     frame = None
     
     
     ctrl = dai.CameraControl()
     
-    ctrl.setCaptureStill(True)
+    ctrl.setCaptureStill(False)
     input_q.send(ctrl)
     print("Sending capture still")
     #input_q = device.getInputQueue("input_name")
