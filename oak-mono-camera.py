@@ -6,6 +6,10 @@ import depthai as dai
 import numpy as np
 import pandas as pd
 
+#maths
+from numpy.fft import fft, ifft
+import matplotlib.pyplot as plt
+
 import datetime
 
 
@@ -61,6 +65,12 @@ WB_STEP = 200
 
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
+
+
+
+
+
+
 
 #It takes a while to do this step
 with dai.Device(pipeline) as device:
@@ -143,11 +153,52 @@ with dai.Device(pipeline) as device:
             #select columns for the same
             cols = dataBlob.dtypes[mask].index
             #select these columns and convert to float
-            dataBlobNew = dataBlob[cols].apply(lambda x: x.multiply(x, x))
-            dataBlob[dataBlobNew.columns] = dataBlobNew
+            
+            #dataBlobNew = dataBlob[cols].apply(lambda x: x.multiply(x, x))
+            dataCalc = dataBlob[cols].apply(lambda x: x.add(x, x))
+            #dataCalcClamp = dataCalc[cols].apply(lambda x: clamp(x, 0.0, 255))
+            
+            calc = dataCalc[3::10400]
+            
+            
+            sr = 300
+            ts = 1.0/sr
+            t = np.arange(0, 1,ts)
+            X = fft(calc)
+            N = len(X)
+            n = np.arange(N)
+            T = N/sr
+            freq = n/T
+            
+            plt.style.use('seaborn-poster')
+            #matplotlib inline
+            
+            plt.figure(figsize = (12, 6))
+            plt.subplot(121)
+            
+            plt.stem(freq, np.abs(X), 'b', markerfmt=" ", basefmt="-b", use_line_collection=True)
+            plt.xlabel('Freq (hz)')
+            plt.ylabel('FFT Amplitude |X(freq)|')
+            plt.xlim(0, 10)
+            
+            plt.subplot(122)
+            plt.plot(t, ifft(X), 'r')
+            plt.xlabel('Time (s)')
+            plt.ylabel('Amplitude')
+            plt.tight_layout()
+            plt.show()
+            
+            #create a small mask useful for something I'm sure
+            #dataCalc = dataBlobNew[cols].apply(lambda x: np.geomspace(0.1, 65025))
+            
+            #keep data frame in range
+            #dataCalc = dataBlobNew[cols].apply(lambda x: clamp(x, 0.0, 65025))
+            #dataBlob[dataBlobNew.columns] = dataBlobNew
+            
             print(str(dataBlob))
             print(str(type(dataBlob)))
-            
+            print(str(dataCalc))
+            print(str(type(dataCalc)))
             #a = np.zeros(shape, dtype=float, order='C')
             #print(str(a))
             #print(str(type(a)))
