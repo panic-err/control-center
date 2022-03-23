@@ -57,13 +57,21 @@ with dai.Device(pipeline) as device:
     count = 0
     t = datetime.datetime.now()  
     tprevious = datetime.datetime.now()
-    measurement = 0.0
+    measurement = 0.
+    holdLeft = None
+    holdRight = None
     while True:
 
         inLeft = qLeft.tryGet()
         inRight = qRight.tryGet()
         
-        if inLeft is not None and inRight is not None:
+        if inLeft is not None:
+            holdLeft = inLeft
+        if inRight is not None:
+            holdRight = inRight
+        
+        
+        if holdLeft is not None and  holdRight is not None:
             count += 1
             print(inLeft)
             t2 = datetime.datetime.now()
@@ -77,10 +85,11 @@ with dai.Device(pipeline) as device:
             fps = 1/(measurement)
             print("FPS is " + str(fps))
             t = datetime.datetime.now()
-            cv2.imshow("monoforall", inLeft.getCvFrame())
+            cv2.imshow("monoforall", holdLeft.getCvFrame())
             print(inRight)
-            cv2.imshow("Right", inRight.getCvFrame())
-        
+            cv2.imshow("Right", holdRight.getCvFrame())
+            holdLeft = None
+            holdRight = None
     
         if cv2.waitKey(1) == ord('q'):
             
