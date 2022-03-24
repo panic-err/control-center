@@ -118,7 +118,7 @@ with dai.Device(pipeline) as device:
     
     
     count = 0
-    t = datetime.datetime.now()  
+    ti = datetime.datetime.now()  
     tprevious = datetime.datetime.now()
     measurement = 0.
     holdLeft = None
@@ -141,7 +141,7 @@ with dai.Device(pipeline) as device:
             print(str(data))
             print(str(type(data)))
             print(str(data.shape))
-            shape = (3110400,)
+            shape = (3110399,)
             
             dataBlobZeros = np.empty(shape, dtype=np.float64, order='C')
             dataArray = np.array(data, dtype=np.float64, order='C')
@@ -158,12 +158,14 @@ with dai.Device(pipeline) as device:
             dataCalc = dataBlob[cols].apply(lambda x: x.add(x, x))
             #dataCalcClamp = dataCalc[cols].apply(lambda x: clamp(x, 0.0, 255))
             
-            calc = dataCalc[3::10400]
+            #calc = dataCalc[3::10400]
+            calc = dataCalc[3::4]
             
             
-            sr = 300
+            sr = 777600
             ts = 1.0/sr
             t = np.arange(0, 1,ts)
+            #X = fft(dataBlob)
             X = fft(calc)
             N = len(X)
             n = np.arange(N)
@@ -213,7 +215,7 @@ with dai.Device(pipeline) as device:
             #hold = holdLeft * holdRight
             #print(str(holdLeft.getData())+"Type")
             
-            c = t2 - t
+            c = t2 - ti
             tprevious = c
             smoothing = 0.9
             measurement = (measurement * smoothing) + (tprevious.total_seconds() * (1.0-smoothing))
@@ -221,7 +223,7 @@ with dai.Device(pipeline) as device:
             
             fps = 1/(measurement)
             #print("FPS is " + str(fps))
-            t = datetime.datetime.now()
+            ti = datetime.datetime.now()
             cv2.imshow("monoforall", holdLeft.getCvFrame())
             #print(inRight)
             cv2.imshow("Right", holdRight.getCvFrame())
