@@ -9,6 +9,8 @@ import pandas as pd
 #maths
 from numpy.fft import fft, ifft
 import matplotlib.pyplot as plt
+from scipy.interpolate import splrep, splev
+
 
 import datetime
 
@@ -159,10 +161,9 @@ with dai.Device(pipeline) as device:
             #dataCalcClamp = dataCalc[cols].apply(lambda x: clamp(x, 0.0, 255))
             
             #calc = dataCalc[3::10400]
-            calc = dataCalc[3::4]
-            
-            
-            sr = 777600
+            #calc = dataCalc[3::4096]
+            calc = dataBlob[3::131072]
+            sr = 24
             ts = 1.0/sr
             t = np.arange(0, 1,ts)
             #X = fft(dataBlob)
@@ -171,6 +172,11 @@ with dai.Device(pipeline) as device:
             n = np.arange(N)
             T = N/sr
             freq = n/T
+            iX = ifft(X)
+            
+            list_x = [-0.00496863, 0.0421293, 0.07577707, 0.122869, 0.160996, 0.203608, 0.252949, 0.291076, 0.331445, 0.371815, 0.418913, 0.459283, 0.542265, 0.584877, 0.623004, 0.663374, 0.705986, 0.869708, 0.916806, 0.961661]
+            list_y = [221.733, 177.273, 182.144, 210.225, 55.5515, 28.3916, 217.59, 208.844, 39.4397, 50.4878, 14.1212, 51.4085, 43.587, 105.728, 31.614, 119.538, 113.348, 119.999, 128.666, 125.062]
+            
             
             plt.style.use('seaborn-poster')
             #matplotlib inline
@@ -184,9 +190,19 @@ with dai.Device(pipeline) as device:
             plt.xlim(0, 10)
             
             plt.subplot(122)
-            plt.plot(t, ifft(X), 'r')
+            plt.plot(t, iX, 'r')
+            
             plt.xlabel('Time (s)')
             plt.ylabel('Amplitude')
+            
+            #plt.subplot(122)
+            #plt.plot(t, x, 'r')
+            plt.subplot(122)
+            poly = np.polyfit(list_x, list_y, 7)
+            poly_y = np.poly1d(poly)(list_x)
+            plt.plot(list_x, poly_y)
+            plt.plot(list_x, list_y)
+            
             plt.tight_layout()
             plt.show()
             
