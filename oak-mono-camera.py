@@ -9,7 +9,10 @@ import pandas as pd
 #maths
 from numpy.fft import fft, ifft
 import matplotlib.pyplot as plt
-from scipy.interpolate import splrep, splev
+from matplotlib import cm
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.collections import PolyCollection
+from scipy import signal
 
 
 import datetime
@@ -163,9 +166,10 @@ with dai.Device(pipeline) as device:
             #calc = dataCalc[3::10400]
             #calc = dataCalc[3::4096]
             calc = dataBlob[3::131072]
-            sr = 24
+            sr = 16384
             ts = 1.0/sr
-            t = np.arange(0, 1,ts)
+            t = 10
+            t = np.arange(sr*t) / sr
             #X = fft(dataBlob)
             X = fft(calc)
             N = len(X)
@@ -189,15 +193,38 @@ with dai.Device(pipeline) as device:
             plt.ylabel('FFT Amplitude |X(freq)|')
             plt.xlim(0, 10)
             
+            fs = 11240
+            t = 10
+            
+            
+            
+            
             plt.subplot(122)
-            plt.plot(t, iX, 'r')
+            nperseg = 2**14
+            noverlap = 2**13
+            #noverlap = 2**16
+            #f, t, Sxx = signal.spectrogram(mySignal, fs, nperseg=nperseg, noverlap=0.9)
+            f, t, Sxx = signal.spectrogram(iX)
+            
+            myfilter = (f>800) & (f<1200)
+            
+            filt = f[myfilter]
+            #Sxx = Sxx[myfilter, ...]
+            fig = plt.figure()
+            fig,ax = plt.subplots()
+            ax = plt.axes(projection='3d')
+            z = (np.sin(f **2) + np.cos(t **2))
+            ax.plot_surface(f[:, None], t[None, :], Sxx[None, :], cmap=cm.coolwarm)
+            
+            #plt.scatter(t, iX, 'r')
+            #plt.plot(t, iX, 'r')
             
             plt.xlabel('Time (s)')
             plt.ylabel('Amplitude')
             
             #plt.subplot(122)
             #plt.plot(t, x, 'r')
-            plt.subplot(122)
+            
             poly = np.polyfit(list_x, list_y, 7)
             poly_y = np.poly1d(poly)(list_x)
             plt.plot(list_x, poly_y)
@@ -253,6 +280,7 @@ with dai.Device(pipeline) as device:
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qcontrol.send(ctrl)
+            key = None
         elif key in [ord('3'), ord('4')]:
             if key == ord('3'):
                 expTime = 500
