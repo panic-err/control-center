@@ -183,6 +183,23 @@ class IRConfig(threading.Thread):
                 
                 
                 if THISCYCLE and BOTHFRAMES and key == ord('z'):
+                    print("Print out stats:")
+                    data = self.holdLeft.getData()
+                    
+                    s = data.shape
+                    HDRframe = np.zeros(s, dtype=np.uint64)
+                    print(HDRframe)
+                    print(HDRframe.shape)
+                    print(type(HDRframe))
+                    print(HDRframe.dtype)
+                    
+                    print(data)
+                    print(data.shape)
+                    print(type(data))
+                    print(data.dtype)
+                    
+                    
+                    
                     
                     print(self.holdLeft)
                     print(type(self.holdLeft))
