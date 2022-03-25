@@ -38,16 +38,16 @@ xoutRight = pipeline.create(dai.node.XLinkOut)
 controlIn = pipeline.create(dai.node.XLinkIn)
 configIn = pipeline.create(dai.node.XLinkIn)
 
-#configMonoRIn = pipeline.create(dai.node.ImageManip)
-#manipROut = pipeline.create(dai.node.XLinkOut)
-#configMonoLIn = pipeline.create(dai.node.ImageManip)
-#manipLOut = pipeline.create(dai.node.XLinkOut)
+configMonoRIn = pipeline.create(dai.node.ImageManip)
+manipROut = pipeline.create(dai.node.XLinkOut)
+configMonoLIn = pipeline.create(dai.node.ImageManip)
+manipLOut = pipeline.create(dai.node.XLinkOut)
 
 
-#configMonoRIn.initialConfig.setResize(848, 480)
-#configMonoRIn.initialConfig.setFrameType(dai.ImgFrame.Type.RAW8)
-#configMonoLIn.initialConfig.setResize(848, 480)
-#configMonoLIn.initialConfig.setFrameType(dai.ImgFrame.Type.RAW8)
+configMonoRIn.initialConfig.setResize(300, 300)
+configMonoRIn.initialConfig.setFrameType(dai.ImgFrame.Type.RAW8)
+configMonoLIn.initialConfig.setResize(300, 300)
+configMonoLIn.initialConfig.setFrameType(dai.ImgFrame.Type.RAW8)
 
 
 xoutLeft.setStreamName('left')
@@ -55,8 +55,8 @@ xoutRight.setStreamName('right')
 camoutRGB.setStreamName('rgb')
 controlIn.setStreamName('control')
 configIn.setStreamName('config')
-#manipROut.setStreamName('configuredR')
-#manipLOut.setStreamName('configuredL')
+manipROut.setStreamName('configuredR')
+manipLOut.setStreamName('configuredL')
 
 
 
@@ -75,9 +75,10 @@ monoLeft.setBoardSocket(dai.CameraBoardSocket.LEFT)
 monoLeft.setResolution(dai.MonoCameraProperties.SensorResolution.THE_400_P)
 
 
-#configMonoRIn.initialConfig.setCropRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
-#configMonoLIn.initialConfig.setCropRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
-
+configMonoRIn.initialConfig.setCropRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
+configMonoLIn.initialConfig.setCropRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
+configMonoRIn.setMaxOutputFrameSize(monoRight.getResolutionHeight()*monoRight.getResolutionWidth()*3)
+configMonoLIn.setMaxOutputFrameSize(monoLeft.getResolutionHeight()*monoLeft.getResolutionWidth()*3)
 
 #colur camera
 camRGB.setBoardSocket(dai.CameraBoardSocket.RGB)
@@ -96,10 +97,10 @@ camRGB.video.link(camoutRGB.input)
 
 controlIn.out.link(camRGB.inputControl)
 
-monoLeft.out.link(xoutLeft.input)
-monoRight.out.link(xoutRight.input)
-#monoLeft.out.link(configMonoLIn.inputImage)
-#monoRight.out.link(configMonoRIn.inputImage)
+#monoLeft.out.link(xoutLeft.input)
+#monoRight.out.link(xoutRight.input)
+monoLeft.out.link(configMonoLIn.inputImage)
+monoRight.out.link(configMonoRIn.inputImage)
 
 #monoLeft.out.link(configMonoRIn.inputConfig)
 #monoRight.out.link()
