@@ -6,6 +6,8 @@ import depthai as dai
 import numpy as np
 import pandas as pd
 
+import sys
+
 import threading
 
 #maths
@@ -167,8 +169,8 @@ class IRConfig(threading.Thread):
             #cmd.STOP_STREAM
 
 
-            qLeft = device.getOutputQueue(name="left", maxSize=1, blocking=False)
-            qRight = device.getOutputQueue(name="right", maxSize=1, blocking=False)
+            qLeft = device.getOutputQueue(name="left", maxSize=4, blocking=False)
+            qRight = device.getOutputQueue(name="right", maxSize=4, blocking=False)
             
             qRGB = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
             qcontrol = device.getInputQueue(name="control", maxSize=4, blocking=False)
@@ -224,6 +226,8 @@ class IRConfig(threading.Thread):
 
                 key = cv2.waitKey(1)
                 
+                
+                
                 if THISCYCLE and BOTHFRAMES and key == ord('z'):
                     
                     #frameLeft = holdLeft.getCvFrame()
@@ -239,6 +243,12 @@ class IRConfig(threading.Thread):
                     holdLeft = None
                     holdRight = None
                     BOTHFRAMES = False
+                elif key == ord('z') and self.holdLeft is not None:
+                    print("Left frame: "+str(self.holdLeft))
+                    print("Left type: "+str(type(self.holdLeft)))
+                    rawFrameLeft = self.holdLeft.getRaw()
+                    print(rawFrameLeft)
+                    print("Type of raw frame left" + str(type(rawFrameLeft)))
                 elif key == ord('p'):
                     print("Taking picture")
                     ctrl = dai.CameraControl()
@@ -275,6 +285,7 @@ class IRConfig(threading.Thread):
                 if key == ord('q'):
                     
                     break
+        sys.exit()
 
 if __name__ == "__main__":
     print("Making this a multi-threaded application")
@@ -282,3 +293,4 @@ if __name__ == "__main__":
     
     t = threading.Thread(target=t.run)
     t.start()
+    
