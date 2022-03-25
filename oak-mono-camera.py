@@ -40,31 +40,16 @@ xoutRight = pipeline.create(dai.node.XLinkOut)
 controlIn = pipeline.create(dai.node.XLinkIn)
 configIn = pipeline.create(dai.node.XLinkIn)
 
-configMonoRIn = pipeline.create(dai.node.ImageManip)
-manipROut = pipeline.create(dai.node.XLinkOut)
-configMonoLIn = pipeline.create(dai.node.ImageManip)
-manipLOut = pipeline.create(dai.node.XLinkOut)
-
-
-configMonoRIn.initialConfig.setResize(300, 300)
-configMonoRIn.initialConfig.setFrameType(dai.ImgFrame.Type.RAW8)
-configMonoLIn.initialConfig.setResize(300, 300)
-configMonoLIn.initialConfig.setFrameType(dai.ImgFrame.Type.RAW8)
-
 
 xoutLeft.setStreamName('left')
 xoutRight.setStreamName('right')
 camoutRGB.setStreamName('rgb')
 controlIn.setStreamName('control')
 configIn.setStreamName('config')
-manipROut.setStreamName('configuredR')
-manipLOut.setStreamName('configuredL')
 
 
 
 
-#topLeft = dai.Point2f(1, 1)
-#bottomRight = dai.Point2f(1, 1)
 
 topLeft = dai.Point2f(0.2, 0.2)
 bottomRight = dai.Point2f(0.8, 0.8)
@@ -77,12 +62,6 @@ monoLeft.setBoardSocket(dai.CameraBoardSocket.LEFT)
 monoLeft.setResolution(dai.MonoCameraProperties.SensorResolution.THE_400_P)
 
 
-configMonoRIn.initialConfig.setCropRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
-configMonoLIn.initialConfig.setCropRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
-configMonoRIn.setMaxOutputFrameSize(monoRight.getResolutionHeight()*monoRight.getResolutionWidth()*3)
-configMonoLIn.setMaxOutputFrameSize(monoLeft.getResolutionHeight()*monoLeft.getResolutionWidth()*3)
-
-#colur camera
 camRGB.setBoardSocket(dai.CameraBoardSocket.RGB)
 camRGB.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
 camRGB.setVideoSize(300, 300)
@@ -99,21 +78,11 @@ camRGB.video.link(camoutRGB.input)
 
 controlIn.out.link(camRGB.inputControl)
 
-#monoLeft.out.link(xoutLeft.input)
-#monoRight.out.link(xoutRight.input)
-monoLeft.out.link(configMonoLIn.inputImage)
-monoRight.out.link(configMonoRIn.inputImage)
-
-#monoLeft.out.link(configMonoRIn.inputConfig)
-#monoRight.out.link()
+monoLeft.out.link(xoutLeft.input)
+monoRight.out.link(xoutRight.input)
 
 
 configIn.out.link(camRGB.inputConfig)
-#configMonoRIn.out.link(configMonoRIn.inputConfig)
-#configMonoRIn.out.link(monoRight.inputConfig)
-#configMonoLIn.out.link(monoLeft.inputConfig)
-
-
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
 
@@ -152,21 +121,6 @@ class IRConfig(threading.Thread):
             wbMax = 12000
 
 
-            #cmd = dai.RawCameraControl.Command(dai.RawCameraControl.Command.START_STREAM)
-
-            #solar = dai.RawCameraControl.Command(dai.RawCameraControl.Command.EFFECT_MODE)
-            
-            #awb = dai.RawCameraControl.AutoWhiteBalanceMode(dai.RawCameraControl.AutoWhiteBalanceMode.OFF)
-            #solar = solar.EffectMode.SOLARIZE
-            
-            
-            #cme.EFFECT_MODE = cmd.EffectMode.SOLARIZE
-            #still = dai.RawCameraControl.Command(dai.RawCameraControl.Command.STILL_CAPTURE)
-            
-            #end = dai.RawCameraControl.Command(dai.RawCameraControl.Command.STOP_STREAM)
-
-            #cmd.STILL_CAPTURE
-            #cmd.STOP_STREAM
 
 
             qLeft = device.getOutputQueue(name="left", maxSize=4, blocking=False)
@@ -230,8 +184,6 @@ class IRConfig(threading.Thread):
                 
                 if THISCYCLE and BOTHFRAMES and key == ord('z'):
                     
-                    #frameLeft = holdLeft.getCvFrame()
-                    #frameRight = holdRight.getCvFrame()
                     print(self.holdLeft)
                     print(type(self.holdLeft))
                     print(self.holdLeft.getType())
@@ -243,12 +195,6 @@ class IRConfig(threading.Thread):
                     holdLeft = None
                     holdRight = None
                     BOTHFRAMES = False
-                elif key == ord('z') and self.holdLeft is not None:
-                    print("Left frame: "+str(self.holdLeft))
-                    print("Left type: "+str(type(self.holdLeft)))
-                    rawFrameLeft = self.holdLeft.getRaw()
-                    print(rawFrameLeft)
-                    print("Type of raw frame left" + str(type(rawFrameLeft)))
                 elif key == ord('p'):
                     print("Taking picture")
                     ctrl = dai.CameraControl()
@@ -279,8 +225,6 @@ class IRConfig(threading.Thread):
                     ctrl = dai.CameraControl()
                     ctrl.setManualExposure(expTime, sensIso)
                     qcontrol.send(ctrl)
-                #holdLeft = None
-                #holdRight = None
                 THISCYCLE = False    
                 if key == ord('q'):
                     
