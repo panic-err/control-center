@@ -255,20 +255,21 @@ class Receiver(InputBox,QThread,QSlider):
     @Slot()
     def decreaseY(self):
         self.y -= 1
+        #y at 130 does some good
     #def updateScreen(self):
     #    #while True:
     #    #    #self.show()
-    def drawLines(self):
-        img = cv.imread('stills/horns.jpg',0)
-
-        edges = cv.Canny(img, self.x, self.y)
-
-        plt.subplot(121),plt.imshow(img,cmap = 'gray')
-        plt.title('Original Image'),plt.xticks([]), plt.yticks([])
-        plt.subplot(122),plt.imshow(edges,cmap = 'gray')
-        plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
-
-        plt.show()
+    #def drawLines(self):
+    #    img = cv.imread('stills/horns.jpg',0)
+    #
+    #    edges = cv.Canny(img, self.x, self.y)
+    #
+    #    plt.subplot(121),plt.imshow(img,cmap = 'gray')
+    #    plt.title('Original Image'),plt.xticks([]), plt.yticks([])
+    #    plt.subplot(122),plt.imshow(edges,cmap = 'gray')
+    #    plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
+    #
+    #    plt.show()
     def consumeCallback(self, ch, method, properties, body):
         print("[x], %r:%r" % (method.routing_key, body))
         bodyStr = str(body)
@@ -660,6 +661,7 @@ if __name__ == "__main__":
 
     print("doot")
     #det.show()
+    num = 0
     while(True):
         try:
             ret, frame = vido.read()
@@ -668,6 +670,7 @@ if __name__ == "__main__":
             #e as NoneType
         #detect using lbp
         toUseLBP = frame.copy()
+
         #im = det.lbp(toUseLBP)
         #toDet = cv2.cvtColor(toUseLBP, cv2.COLOR_BGR2GRAY)
         #toCanny = toDet.copy()
@@ -678,6 +681,7 @@ if __name__ == "__main__":
         edgeDet = det.lbp(edges)
         #plt.subplot(121),plt.imshow(img,cmap = 'gray')
         #plt.title('Original Image'),plt.xticks([]), plt.yticks([])
+
         plt.subplot(122),plt.imshow(edges,cmap = 'gray')
         plt.title('Edge Image' ), plt.xticks([]), plt.yticks([])
 
@@ -699,7 +703,10 @@ if __name__ == "__main__":
         #im = det.haar(toUseHaar)
         #print(str(c))
         #Show the image
-        cv2.imshow('lbp vs haar', edges)
+        cv2.imshow('lbp vs haar', edgeDet)
+        #Uncomment the line below to write out the frames one by one
+        cv2.imwrite(str(num)+"doot.png", edges)
+        num += 1
         if cv2.waitKey(1) & 0xFF == ord('q'):
             #vido.close()
             vido.release()
