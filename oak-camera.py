@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-
+#and this is when the author realized they could edit
+#multiple sections of code in different editors
+#using nano
+#and
+#everything was worth it
 import cv2
 import depthai as dai
 
