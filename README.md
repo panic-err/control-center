@@ -18,6 +18,7 @@ These are currently under development files in runnable condition
 ** runnable files
 - cannygrace.py
 - oak-mono-camera.py
+- oak-camera.py
 
 ** file under current development
-- oak-mono-camera.py
+- oak-camera.py
