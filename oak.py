@@ -8,7 +8,7 @@ pipeline = dai.Pipeline()
 #pipeline.setCameraTuningBlobPath('../computer-vision/mono-colourspace/tuning_color_low_light.bin')
 #cam = pipeline.create(dai.node.ColorCamera)
 pipeline.setCameraTuningBlobPath('../computer-vision/mono-colourspace/tuning_mono_low_light.bin')
-cam = pipeline.create(dai.node.MonoCamera)
+cam = pipeline.create(dai.node.ColorCamera)
 
 
 PreviewSize = (300, 300)
@@ -40,16 +40,15 @@ with dai.Device() as device:
     print('USB Speed:', device.getUsbSpeed())
     print('Connected Cameras:', device.getConnectedCameras())
     
-    input_q = device.getInputQueue(cam.getStreamName())
-    output_q = device.getOutputQueue(cam.getStreamName(), maxSize=1, blocking=False)
+    input_q = device.getInputQueue("input_stream", maxSize=1, blocking=False)
+    output_q = device.getOutputQueue("output_stream", maxSize=1, blocking=False)
     frame = None
     
-    
     ctrl = dai.CameraControl()
-    
-    ctrl.setCaptureStill(False)
+    ctrl.setCaptureStill(True)
     input_q.send(ctrl)
     print("Sending capture still")
+    
     #input_q = device.getInputQueue("input_name")
     #output_q = device.getOutputQueue("output_name", maxSize=1, blocking=False)
     count = 0
@@ -73,5 +72,6 @@ with dai.Device() as device:
     
     #while True:
     #    fps = cam.getFps()
+
     #    print("FPS: " + str(fps))
     
