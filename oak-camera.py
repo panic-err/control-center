@@ -240,7 +240,7 @@ class IRConfig(threading.Thread):
                         backend = qiskit.BasicAer.get_backend('qasm_simulator')
                         job = qiskit.execute(compiled_circuit, backend)
                         
-                        qiskit.visualization.plot_histogram(job.result().get_counts(), ax=zed, color='green', title="quantum circuit")
+                        qiskit.visualization.plot_histogram(job.result().get_counts(), ax=zed, color='green', title="ideal(flawed) form")
                         plt.show()
                         ploot.show()
                         print("plotted successfully")
