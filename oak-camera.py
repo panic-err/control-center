@@ -16,6 +16,18 @@ import threading
 
 #maths
 
+import pandas
+
+import numpy as np
+
+import qiskit
+import qiskit.providers.aer as aer
+
+import cv2
+
+
+
+
 from numpy.fft import fft, ifft
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -149,9 +161,30 @@ class IRConfig(threading.Thread):
             countMonoDropped = 0
             countColorDropped = 0
             
+            simulator = aer.QasmSimulator()
+            circuit = qiskit.QuantumCircuit(2, 2)
+
+            circuit.h(0)
+
+            circuit.cx(0, 1)
+
+            circuit.measure([0,1], [0,1])
+
+            compiled_circuit = qiskit.transpile(circuit, simulator)
+
+            job = simulator.run(compiled_circuit, shots=1000)
+
+            result = job.result()
+
+            counts = result.get_counts(compiled_circuit)
+            print("\nTotal count for 00 and 11 are",counts)
+
+
+            
             while True:
                  #print("Running the loop")
                 
+        
                 try:
                     if self.holdLeft is None:
                         inLeft = qLeft.tryGet()
@@ -190,8 +223,23 @@ class IRConfig(threading.Thread):
                 key = cv2.waitKey(1)
                 
                 
-                
-                if THISCYCLE and BOTHFRAMES and key == ord('z'):
+                if key == ord('t'):
+                    print("pressed t")
+                    try:
+                        fig = qiskit.visualization.plot_histogram(counts)
+                    except Exception as e:
+                        print(e)
+                        break
+                        #fig.destroy()
+                    try:
+                        drawing = circuit.draw()
+                    except Exception as e:
+                        print(e)
+                        break
+                        #drawing.destroy()
+                    #fig.destroy()
+                    #drawing.destroy()               
+                elif THISCYCLE and BOTHFRAMES and key == ord('z'):
                     print("Print out stats:")
                     data = self.holdLeft.getData()
                     
@@ -266,6 +314,6 @@ if __name__ == "__main__":
     print("Making this a multi-threaded application")
     t = IRConfig()
     
-    t = threading.Thread(target=t.run)
-    t.start()
+    backend = threading.Thread(target=t.run)
+    backend.start()
     
