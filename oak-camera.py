@@ -23,7 +23,7 @@ import numpy as np
 import qiskit
 import qiskit.providers.aer as aer
 
-import cv2
+
 
 
 
@@ -31,6 +31,8 @@ import cv2
 from numpy.fft import fft, ifft
 import matplotlib.pyplot as plt
 from matplotlib import cm
+from matplotlib import axes
+import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.collections import PolyCollection
 from scipy import signal
@@ -224,10 +226,26 @@ class IRConfig(threading.Thread):
                 
                 
                 if key == ord('t'):
+                    
                     print("pressed t")
                     try:
-                        fig = qiskit.visualization.plot_histogram(counts)
-                    except Exception as e:
+                        
+                        bloch = [0, 1, 0]
+                        #figg = mpl.figure.Figure()
+                        figg, axs = plt.subplots(2, 1)
+                        img = np.zeros((2,2,3), np.uint8)
+                        rect = [0, 0, 50, 50]
+                        zed = axes.Axes(figg, rect)
+                        ploot = qiskit.visualization.plot_bloch_vector([0,1,0], title="Quantum Circuits")
+                        backend = qiskit.BasicAer.get_backend('qasm_simulator')
+                        job = qiskit.execute(compiled_circuit, backend)
+                        
+                        qiskit.visualization.plot_histogram(job.result().get_counts(), ax=zed, color='green', title="quantum circuit")
+                        plt.show()
+                        ploot.show()
+                        print("plotted successfully")
+                        
+                    except qiskit.MissingOptionalLibraryError as e:
                         print(e)
                         break
                         #fig.destroy()
